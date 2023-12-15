@@ -36,7 +36,7 @@ class ProductManager {
   }
 
   getProducts() {
-    console.log(this.products);
+    return this.products;
   }
 
   async getProductById(id) {
@@ -105,72 +105,4 @@ class ProductManager {
   }
 }
 
-const manager = new ProductManager("./products.json");
-
-manager.getProducts();
-
-const zapatilla = {
-  title: "zapatilla",
-  description: "No description",
-  price: 150,
-  thumbnail: "No image",
-  code: "s123",
-  stock: 10,
-};
-
-const zapatilla2 = {
-  title: "zapatilla2",
-  description: "No description",
-  price: 200,
-  thumbnail: "No image",
-  code: "d023",
-  stock: 8,
-};
-
-const zapatilla3 = {
-  title: "zapatilla3",
-  description: "No description",
-  price: 300,
-  thumbnail: "No image",
-  code: "p423",
-  stock: 5,
-};
-
-
-manager.addProduct(zapatilla);
-manager.addProduct(zapatilla2);
-manager.addProduct(zapatilla3);
-
-manager.getProducts();
-
-async function testeoBusqueda(id) {
-  const found = await manager.getProductById(id);
-  console.log(found);
-}
-
-testeoBusqueda(2);
-
-const zapatillaActualizada = {
-  id: 1,
-  title: "zapatilla actualizada",
-  description: "esta zapatilla esta actualizada",
-  price: 150,
-  thumbnail: "No image",
-  code: "d123",
-  stock: 10,
-};
-
-async function testeoActualizacion() {
-  await manager.updateProduct(1, zapatillaActualizada);
-}
-
-testeoActualizacion();
-
-manager.getProducts();
-
-async function testeoDelete(id) {
-  await manager.deleteProduct(id);
-}
-
-testeoDelete(3);
-
+module.exports = ProductManager;
