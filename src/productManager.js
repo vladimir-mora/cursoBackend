@@ -35,8 +35,10 @@ class ProductManager {
     await this.guardarArchivo(this.products);
   }
 
-  getProducts() {
-    return this.products;
+  async getProducts() {
+    const response = await fs.readFile(this.path,"utf-8")
+    const responseJSON = JSON.parse(response)
+    return responseJSON
   }
 
   async getProductById(id) {
