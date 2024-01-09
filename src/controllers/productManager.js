@@ -9,22 +9,57 @@ class ProductManager {
   }
 
   async addProduct(object) {
-    let { title, description, price, thumbnail, code, stock } = object;
+    const productsExisting = await this.leerArchivo();
 
-    if (!title || !description || !price || !thumbnail || !code || !stock) {
+    if (!productsExisting) {
+      this.products = [];
+    } else {
+      this.products = productsExisting;
+    }
+
+    let {
+      title,
+      description,
+      price,
+      status,
+      category,
+      thumbnail,
+      code,
+      stock,
+    } = object;
+
+    if (
+      !title ||
+      !description ||
+      !price ||
+      !status ||
+      !category ||
+      !code ||
+      !stock
+    ) {
       console.log("Todos los campos son obligatorios");
-      return;
+      return null;
     }
 
     if (this.products.some((item) => item.code === code)) {
       console.log("El código tiene que ser único, se está repitiendo");
+      return null;
+    }
+
+    let maxId = ProductManager.id;
+    for (const product of this.products) {
+      if (product.id > maxId) {
+        maxId = product.id;
+      }
     }
 
     const newProduct = {
-      id: ++ProductManager.id,
+      id: ++maxId,
       title,
       description,
       price,
+      status,
+      category,
       thumbnail,
       code,
       stock,
@@ -36,9 +71,9 @@ class ProductManager {
   }
 
   async getProducts() {
-    const response = await fs.readFile(this.path,"utf-8")
-    const responseJSON = JSON.parse(response)
-    return responseJSON
+    const response = await fs.readFile(this.path, "utf-8");
+    const responseJSON = JSON.parse(response);
+    return responseJSON;
   }
 
   async getProductById(id) {
@@ -80,7 +115,13 @@ class ProductManager {
       const arrayProducts = await this.leerArchivo();
       const index = arrayProducts.findIndex((item) => item.id === id);
       if (index !== -1) {
-        arrayProducts.splice(index, 1, updatedProduct);
+        const originalProduct = arrayProducts[index];
+
+        const updatedProductId = {
+          id: originalProduct.id,
+          ...updatedProduct,
+        };
+        arrayProducts.splice(index, 1, updatedProductId);
         await this.guardarArchivo(arrayProducts);
       } else {
         console.log("Product not found");
@@ -100,6 +141,7 @@ class ProductManager {
         console.log("Product deleted");
       } else {
         console.log("Product not found");
+        return null;
       }
     } catch (error) {
       console.log("Error al borrar el producto", error);
