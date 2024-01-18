@@ -43,7 +43,7 @@ router.post("/", async (req, res) => {
 
 router.post("/:cid/product/:pid", async (req, res) => {
   const cartId = parseInt(req.params.cid);
-  const productId = req.params.pid;
+  const productId = parseInt(req.params.pid);
   const quantity = req.body.quantity || 1;
 
   try {
