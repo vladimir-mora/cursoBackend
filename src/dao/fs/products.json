@@ -112,13 +112,13 @@
   },
   {
     "id": 12,
-    "title": "zapatilla15",
-    "description": "no description",
-    "price": 400,
+    "title": "zaptilla15",
+    "description": "no descrption",
+    "price": 200,
     "status": true,
     "category": "zapa",
     "thumbnail": "No image",
-    "code": "ff44",
+    "code": "pp331",
     "stock": 7
   }
 ]

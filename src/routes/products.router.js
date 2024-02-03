@@ -1,29 +1,37 @@
 const express = require("express");
 const router = express.Router();
-const ProductManager = require("../controllers/productManager.js");
-const manager = new ProductManager("./src/models/products.json");
+const ProductManager = require("../dao/db/dbProductManager.js");
+const manager = new ProductManager();
 
 router.get("/", async (req, res) => {
-  const limit = parseInt(req.query.limit);
-  if (!isNaN(limit) && limit > 0) {
-    const products = await manager.getProducts();
-    const productLimit = products.slice(0, limit);
-    res.send(productLimit);
-  } else {
-    const allProducts = await manager.getProducts();
-    res.send(allProducts);
+  try {
+    const limit = parseInt(req.query.limit);
+    if (!isNaN(limit) && limit > 0) {
+      const products = await manager.getProducts();
+      const productLimit = products.slice(0, limit);
+      res.json(productLimit);
+    } else {
+      const allProducts = await manager.getProducts();
+      res.json(allProducts);
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Error del servidor" });
   }
 });
 
 router.get("/:pid", async (req, res) => {
-  let pid = parseInt(req.params.pid);
-  const product = await manager.getProductById(pid);
-  if (product) {
-    res.send(product);
-  } else {
-    res.send({
-      error: "producto inexistente",
-    });
+  const pid = req.params.pid;
+  try {
+    const product = await manager.getProductById(pid);
+    if (product) {
+      res.json(product);
+    } else {
+      res.send({
+        error: "producto inexistente",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Error del servidor" });
   }
 });
 
@@ -42,7 +50,7 @@ router.post("/", async (req, res) => {
 });
 
 router.put("/:pid", async (req, res) => {
-  let pid = parseInt(req.params.pid);
+  let pid = req.params.pid;
   const update = req.body;
   let productUpdate = await manager.updateProduct(pid, update);
   if (productUpdate !== null) {
@@ -59,7 +67,7 @@ router.put("/:pid", async (req, res) => {
 });
 
 router.delete("/:pid", async (req, res) => {
-  let pid = parseInt(req.params.pid);
+  let pid = req.params.pid;
   let productDelete = await manager.deleteProduct(pid);
   if (productDelete !== null) {
     res.send({
