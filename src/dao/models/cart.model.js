@@ -4,14 +4,13 @@ const cartSchema = new mongoose.Schema({
   products: [
     {
       product: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Product",
-        required: true,
+        type: String,
       },
-      quantity: { type: Number, required: true },
+      quantity: { type: Number},
     },
   ],
 });
 
 const CartModel = mongoose.model("carts", cartSchema);
+
 module.exports = CartModel;

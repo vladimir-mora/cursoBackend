@@ -1,16 +1,8 @@
-<h1>PRODUCTS LIST</h1>
-<br />
-<br />
-  <div id="container">
-{{#each products}}
-    <div class="card">
-      <h3 class="title">{{this.title}}</h3>
-      <img src="{{this.thumbnail}}" alt="thumbnail" />
-      <p class="text">{{this.description}}</p>
-      <p class="text">category: {{this.category}}</p>
-      <p class="text">price: ${{this.price}}</p>
-      <p class="text">stock:{{this.stock}}</p>
-      <p class="text">code: {{this.code}}</p>
-    </div>
-{{/each}}
+<div class="container-fluid d-flex flex-column justify-content-center align-items-center vh-100">
+  <h1 class="title_home">Sneaker World</h1>
+  <h2 class="subtitle_home mb-3">Home</h2>
+  <div class="d-flex flex-column mb-3">
+    <a class="btn btn-primary mb-3" role="button" href="/products">Ir a los productos</a>
+    <a class="btn btn-primary" role="button" href="/cart">Ir a los carritos</a>
   </div>
+</div>

@@ -1,0 +1,72 @@
+<div
+  class="container d-flex flex-column justify-content-center mb-5"
+  style="height: 90vh;"
+>
+  <div class="row">
+    <div class="col text-center mb-3">
+      <h1>PRODUCTS</h1>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-md-10">
+      <div class="row">
+        {{#if payload}}
+          {{#each payload}}
+            <div class="col-md-4 mb-4">
+              <div class="card" style="width: 18rem;">
+                <img src="{{this.thumbnail}}" class="card-img-top" alt="..." />
+                <div class="card-body">
+                  <h4 class="card-title">{{this.title}}</h4>
+                  <p class="card-text">{{this.description}}</p>
+                  <h5>Price: {{this.price}}</h5>
+                  <h6 class="card-text">Category: {{this.category}}</h6>
+                  <h6>Stock: {{this.stock}}</h6>
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    onclick="addToCart('{{this._id}}')"
+                  >Add to cart</button>
+                </div>
+              </div>
+            </div>
+          {{/each}}
+        {{else}}
+          <div class="col text-center">
+            <h2>No hay productos</h2>
+          </div>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+
+  <div class="row justify-content-center align-items-center mt-3">
+    <div class="col-auto">
+      {{#if hasPrevPage}}
+        <a
+          class="btn btn-primary me-3"
+          href="{{prevLink}}"
+          role="button"
+        >Anterior</a>
+      {{/if}}
+    </div>
+    <div class="col text-center">
+      <h4>Página: {{resPage}} de {{totalPages}}</h4>
+    </div>
+    <div class="col-auto">
+      {{#if hasNextPage}}
+        <a
+          class="btn btn-primary ms-3"
+          href="{{nextLink}}"
+          role="button"
+        >Siguiente</a>
+      {{/if}}
+    </div>
+  </div>
+
+  <div class="row justify-content-center mt-3">
+    <div class="col-auto">
+      <a class="btn btn-secondary" href="/" role="button">Volver al Home</a>
+    </div>
+  </div>
+</div>

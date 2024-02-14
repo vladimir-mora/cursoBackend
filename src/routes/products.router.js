@@ -5,22 +5,16 @@ const manager = new ProductManager();
 
 router.get("/", async (req, res) => {
   try {
-    const limit = parseInt(req.query.limit);
-    if (!isNaN(limit) && limit > 0) {
-      const products = await manager.getProducts();
-      const productLimit = products.slice(0, limit);
-      res.json(productLimit);
-    } else {
-      const allProducts = await manager.getProducts();
-      res.json(allProducts);
-    }
+    const { query, limit = 2, page = 1, sort } = req.query;
+    const products = await manager.getProducts(query, limit, page, sort);
+    res.json(products);
   } catch (error) {
     res.status(500).json({ error: "Error del servidor" });
   }
 });
 
 router.get("/:pid", async (req, res) => {
-  const pid = req.params.pid;
+  const { pid } = req.params.pid;
   try {
     const product = await manager.getProductById(pid);
     if (product) {
@@ -36,38 +30,30 @@ router.get("/:pid", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-  let addProduct = await manager.addProduct(req.body);
-  if (addProduct !== null) {
-    res.send({
-      message: "El producto se agrego correctamente",
-      data: addProduct,
+  try {
+    const product = req.body;
+    const newProduct = await manager.addProduct(product);
+    res.json({
+      message: "producto agregado correctamente",
+      data: newProduct,
     });
-  } else {
-    res.status(400).send({
-      error: "error al agregar el producto, datos incompletos",
-    });
+  } catch (error) {
+    res.status(500).json({ error: "Error del servidor" });
   }
 });
 
 router.put("/:pid", async (req, res) => {
-  let pid = req.params.pid;
-  const update = req.body;
-  let productUpdate = await manager.updateProduct(pid, update);
-  if (productUpdate !== null) {
-    res.send({
-      message: "Producto actualizado correctamente",
-      data: productUpdate,
-    });
-  } else {
-    res.status(404).send({
-      error:
-        "error al actualizar, el producto no existe o los datos estan incompletos",
-    });
-  }
+  const { pid } = req.params;
+  const product = req.body;
+  const update = await manager.updateProduct(pid, product);
+  res.json({
+    message: "producto actualizado correctamente",
+    data: update,
+  });
 });
 
 router.delete("/:pid", async (req, res) => {
-  let pid = req.params.pid;
+  const { pid } = req.params;
   let productDelete = await manager.deleteProduct(pid);
   if (productDelete !== null) {
     res.send({

@@ -1,85 +1,86 @@
 const ProductModel = require("../../dao/models/product.model");
 
+const url = "https://localhost:8080/api/products/?";
+
 class ProductManager {
-  async addProduct(object) {
+  async getProducts(query, limit, page, sort) {
     try {
-      const {
-        title,
-        description,
-        price,
-        status,
-        category,
-        code,
-        stock,
-        thumbnail,
-      } = object;
-
-      if (
-        !title ||
-        !description ||
-        !price ||
-        !status ||
-        !category ||
-        !code ||
-        !stock
-      ) {
-        console.log("Todos los campos son obligatorios");
-        return null;
+      let param = {};
+      if (sort) {
+        param = {
+          limit: parseInt(limit),
+          page: parseInt(page),
+          sort: { price: sort },
+          lean: true,
+        };
+      } else {
+        param = {
+          limit: parseInt(limit),
+          page: parseInt(page),
+          lean: true,
+        };
       }
-
-      const productExisting = await ProductModel.findOne({ code: code });
-
-      if (productExisting) {
-        console.log("El código del producto ya existe");
-        return;
+      const q = {};
+      if (query) {
+        const i = query.indexOf(":");
+        const f = query.length;
+        const key = query.substring(0, i);
+        const value = query.substring(i + 1, f);
+        q[key] = value;
       }
-
-      const newProduct = new ProductModel({
-        title,
-        description,
-        price,
-        status: true,
-        category,
-        thumbnail,
-        code,
-        stock,
-      });
-
-      await newProduct.save();
+      const result = await ProductModel.paginate(q, param);
+      if (result.hasNextPage) {
+        result.nexLink = `${url}${query ? "query=" + query + "&" : ""}${
+          "limit=" + limit
+        }${"&page=" + (+page + 1)}${sort ? "&sort=" + sort : ""}`;
+      }
+      if (result.hasPrevPage) {
+        result.prevLink = `${url}${query ? "query=" + query + "&" : ""}${
+          "limit=" + limit
+        }${"&page=" + (+page - 1)}${sort ? "&sort=" + sort : ""}`;
+      }
+      return {
+        status: "success",
+        payload: result.docs,
+        totalDocs: result.totalDocs,
+        limit: result.limit,
+        totalPages: result.totalPages,
+        page: result.page,
+        pagingCounter: result.pagingCounter,
+        hasPrevPage: result.hasPrevPage,
+        hasNextPage: result.hasNextPage,
+        prevPage: result.prevPage,
+        nextPage: result.nextPage,
+        prevLink: result.prevLink,
+        nextLink: result.nexLink,
+      };
+    } catch (error) {
+      console.log("Error al obtener los Productos", error);
+    }
+  }
+  async getProductById(id) {
+    try {
+      const product = await ProductModel.findById(id);
+      return product;
+    } catch (error) {
+      console.log("Error al obtener el Producto por ID", error);
+    }
+  }
+  async addProduct(product) {
+    try {
+      const product = await ProductModel.create(product);
+      return product;
     } catch (error) {
       console.log("Error al agregar el producto", error);
     }
   }
 
-  async getProducts() {
+  async updateProduct(pid, updatedProduct) {
     try {
-      const products = await ProductModel.find();
-      return products;
-    } catch (error) {
-      console.log("Error al obtener los Productos", error);
-    }
-  }
-
-  async getProductById(id) {
-    try {
-      const product = await ProductModel.findById(id);
-      if (!product) {
-        console.log("Product not found");
-        return null;
-      } else {
-        console.log("Product found");
-        return product;
-      }
-    } catch (error) {
-      console.log("Error al obtener el Producto por ID", error);
-    }
-  }
-
-  async updateProduct(id, updatedProduct) {
-    try {
-      const productUpdated = await ProductModel.findByIdAndUpdate(
-        id,
-        updatedProduct
+      const product = await ProductModel.findByIdAndUpdate(
+        pid,
+        updatedProduct,
+        { new: true }
       );
 
       if (!productUpdated) {
@@ -87,16 +88,16 @@ class ProductManager {
         return null;
       } else {
         console.log("Product updated");
-        return productUpdated;
+        return product;
       }
     } catch (error) {
       console.log("Error al actualizar el producto", error);
     }
   }
 
-  async deleteProduct(id) {
+  async deleteProduct(pid) {
     try {
-      const productDelete = await ProductModel.findByIdAndDelete(id);
+      const productDelete = await ProductModel.findByIdAndDelete(pid);
       if (!productDelete) {
         console.log("Product not found");
         return null;

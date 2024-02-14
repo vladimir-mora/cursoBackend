@@ -1,49 +1,129 @@
 const CartModel = require("../../dao/models/cart.model");
+const ProductModel = require("../../dao/models/product.model");
 
 class CartManager {
+  async getDetails(id) {
+    try {
+      const cart = await CartModel.findById(id);
+      if (!cart) {
+        console.log("El carrito no existe");
+        return null;
+      }
+      const productsDetails = [];
+      for (const item of cart.products) {
+        const product = await ProductModel.findById(item.product);
+
+        if (!product) {
+          console.log("El producto no existe");
+          continue;
+        }
+        const productDetails = {
+          title: product.title,
+          price: product.price,
+          category: product.category,
+          thumbnail: product.thumbnail,
+          quantity: item.quantity,
+        };
+        productsDetails.push(productDetails);
+      }
+      return productsDetails;
+    } catch (error) {
+      console.log("Error al traer los detalles", error);
+    }
+  }
+
+  async getCarts() {
+    try {
+      const carts = await CartModel.find();
+      return carts;
+    } catch (error) {
+      console.log("Error al traer los carts", error);
+    }
+  }
+
   async addCart() {
     try {
-      const newCart = new CartModel({
-        products: [],
-      });
-      await newCart.save();
+      const newCart = await CartModel.create({ products: [] });
       return newCart;
     } catch (error) {
       console.log("Error al agregar el cart", error);
     }
   }
-
-  async getCartById(id) {
+  async getCartById(cid) {
     try {
-      const cart = await CartModel.findById(id);
-      if (!cart) {
-        console.log("Cart not found");
-        return null;
-      } else {
-        console.log("Cart found");
-        return cart;
-      }
+      const cart = await CartModel.findById(cid).populate({
+        path: "products",
+        populate: { path: "product", model: "products" },
+      });
+      return cart;
     } catch (error) {
       console.log("Error al traer el carrito", error);
     }
   }
 
-  async addProductCartId(cartId, productId, quantity = 1) {
+  async addProductCartId(cid, pid) {
     try {
-      const carrito = await this.getCartById(cartId);
-      const existingProduct = carrito.products.find(
-        (i) => i.product.toString() === productId
-      );
-      if (existingProduct) {
-        existingProduct.quantity += quantity;
+      const cart = await CartModel.findById(cid);
+      const product = cart.products.find((i) => i.product.toString() === pid);
+      if (product) {
+        product.quantity++;
       } else {
-        carrito.products.push({ product: productId, quantity });
+        cart.products.push({ product: pid, quantity: 1 });
       }
-      carrito.markModified("products");
-      carrito.save();
-      return carrito;
+      await cart.save();
+      return cart;
     } catch (error) {
       console.log("Error al agregar el producto al carrito", error);
+    }
+  }
+
+  async updateCart(cid, newProduct) {
+    try {
+      const cart = await CartModel.findByIdAndUpdate(
+        cid,
+        { products: newProduct },
+        { new: true }
+      );
+      return cart;
+    } catch (error) {
+      console.log("Error al actualizar el carrito", error);
+    }
+  }
+
+  async updateProductCartId(cid, pid, quantity) {
+    const cart = await CartModel.findById(cid);
+    const product = cart.products.find((i) => i.product.toString() === pid);
+    product.quantity = quantity;
+    await cart.save();
+    return cart;
+  }
+  async deleteProductCartId(cid, pid) {
+    try {
+      const cart = await CartModel.findById(cid);
+      const productIndex = cart.products.findIndex(
+        (i) => i.product.toString() === pid
+      );
+      if (productIndex !== -1) {
+        cart.products.splice(productIndex, 1);
+        await cart.save();
+        console.log("producto eliminado del carrito");
+        return cart;
+      } else {
+        console.log("producto no encontrado en el carrito");
+      }
+    } catch (error) {
+      console.log("Error al borrar el producto del carrito", error);
+    }
+  }
+
+  async clearCart(cid) {
+    try {
+      const cart = await CartModel.findById(cid);
+      cart.products.splice(0, cart.products.length);
+      await cart.save();
+      return cart;
+    } catch (error) {
+      console.log("Error al vaciar el carrito", error);
     }
   }
 }
