@@ -5,9 +5,12 @@ const productManager = new ProductManager();
 const CartManager = require("../dao/db/dbCartManager.js");
 const cartManager = new CartManager();
 
-const url ="http://localhost:8080/products/?";
+const url = "http://localhost:8080/products/?";
 
 router.get("/", async (req, res) => {
+  if (!req.session.login) {
+    return res.redirect("/login");
+  }
   const { query, limit = 3, page = 1, sort } = req.query;
   const response = await productManager.getProducts(query, limit, page, sort);
   let {
@@ -37,6 +40,7 @@ router.get("/", async (req, res) => {
     });
   } else {
     res.render("products", {
+      user: req.session.user,
       payload,
       hasNextPage,
       hasPrevPage,

@@ -1,14 +1,17 @@
 <div
   class="container d-flex flex-column justify-content-center mb-5"
-  style="height: 90vh;"
+  style="height: 95vh;"
 >
   <div class="row">
-    <div class="col text-center mb-3">
-      <h1>PRODUCTS</h1>
+    <div class="col text-center">
+      <h1 class="mb-2">PRODUCTOS</h1>
+      <p class="lead">¡Hola, {{user.first_name}} {{user.last_name}}!</p>
+      <p class="lead">Tu rol es:
+        <span class="badge bg-info"> {{user.rol}}</span></p>
     </div>
   </div>
 
-  <div class="row justify-content-center">
+  <div class="row justify-content-center mt-3">
     <div class="col-md-10">
       <div class="row">
         {{#if payload}}
@@ -66,7 +69,11 @@
 
   <div class="row justify-content-center mt-3">
     <div class="col-auto">
-      <a class="btn btn-secondary" href="/" role="button">Volver al Home</a>
+      <a
+        class="btn btn-secondary"
+        role="button"
+        href="/api/sessions/logout"
+      >Cerrar sesion</a>
     </div>
   </div>
 </div>
