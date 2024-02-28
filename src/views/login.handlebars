@@ -3,7 +3,9 @@
   style="height: 90vh;"
 >
   <div class="col-md-6">
-    <h2 class="text-center mb-4">Login</h2>
+    <h1 class="text-center mb-4" style="font-size: 3.5em;">Sneaker <br> World</h1>
+
+    <h3 class="text-center mb-4">Login</h3>
     <form action="/api/sessions/login" method="POST">
       <div class="form-group">
         <label for="email">Email:</label>
@@ -26,9 +28,19 @@
         />
       </div>
       <div class="form-group text-center mt-3">
-        <button type="submit" class="btn btn-primary me-5">Iniciar sesion</button>
-        <a class="btn btn-secondary" href="/" role="button">Volver al Home</a>
+        <button type="submit" class="btn btn-primary me-3">Iniciar sesión</button>
+        <a
+          class="btn btn-secondary"
+          href="/register"
+          role="button"
+        >Registrarse</a>
       </div>
     </form>
+
+    <div class="form-group text-center mt-3">
+      <a href="/api/sessions/github" class="btn btn-dark">
+        Iniciar sesión con GitHub
+      </a>
+    </div>
   </div>
 </div>

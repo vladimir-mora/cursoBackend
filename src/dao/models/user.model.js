@@ -6,7 +6,6 @@ const userSchema = moongoose.Schema({
   },
   last_name: {
     type: String,
-    required: true,
   },
   email: {
     type: String,
@@ -16,11 +15,9 @@ const userSchema = moongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
   },
   age: {
     type: Number,
-    required: true,
   },
   rol: {
     type: String,
