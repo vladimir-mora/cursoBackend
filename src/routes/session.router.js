@@ -53,5 +53,14 @@ router.get(
     res.redirect("/products");
   }
 );
+ 
+
+router.get("/current", (req, res) => {
+  if (req.session.login && req.session.user) {
+    res.send(req.session.user);
+  } else {
+    res.status(401).send({ status: "error", message: "No hay usuario" });
+  }
+})
 
 module.exports = router;

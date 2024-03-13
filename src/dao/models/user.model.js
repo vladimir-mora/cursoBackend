@@ -21,6 +21,7 @@ const userSchema = moongoose.Schema({
   },
   rol: {
     type: String,
+    default: "user",
     required: true,
   },
 });
