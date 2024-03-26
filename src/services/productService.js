@@ -1,8 +1,7 @@
-const ProductModel = require("../../dao/models/product.model");
+const ProductModel = require("../models/product.model.js");
 
 const url = "https://localhost:8080/api/products/?";
-
-class ProductManager {
+class ProductService {
   async getProducts(query, limit, page, sort) {
     try {
       let param = {};
@@ -111,4 +110,4 @@ class ProductManager {
   }
 }
 
-module.exports = ProductManager;
+module.exports = ProductService;

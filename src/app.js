@@ -10,8 +10,6 @@ const sessionRouter = require("./routes/session.router.js");
 const viewsRouter = require("./routes/loginViews.router.js");
 const productsRouter = require("./routes/products.router.js");
 const cartRouter = require("./routes/carts.router.js");
-const cartViewsRouter = require("./routes/cartView.router.js");
-const productsViewsRouter = require("./routes/productsView.router.js");
 const exphbs = require("express-handlebars");
 const passport = require("passport");
 const initializePassport = require("./config/passport.config.js");
@@ -53,10 +51,8 @@ app.get("/", (req, res) => {
   res.render("login");
 });
 
-app.use("/api/products", productsRouter);
-app.use("/api/cart", cartRouter);
-app.use("/products", productsViewsRouter);
-app.use("/cart", cartViewsRouter);
+app.use("/", productsRouter);
+app.use("/", cartRouter);
 app.use("/", viewsRouter);
 app.use("/api/sessions", sessionRouter);
 app.use("/api/users", userRouter);

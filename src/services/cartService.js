@@ -1,7 +1,8 @@
-const CartModel = require("../../dao/models/cart.model");
-const ProductModel = require("../../dao/models/product.model");
+const CartModel = require("../models/cart.model");
+const ProductModel = require("../models/product.model");
+const mongoose = require("mongoose");
 
-class CartManager {
+class CartService {
   async getDetails(id) {
     try {
       const cart = await CartModel.findById(id);
@@ -51,6 +52,11 @@ class CartManager {
   }
   async getCartById(cid) {
     try {
+      if (!mongoose.Types.ObjectId.isValid(cid)) {
+        console.log("El valor de cid no es un ObjectId válido");
+        return null;
+      }
+
       const cart = await CartModel.findById(cid).populate({
         path: "products",
         populate: { path: "product", model: "products" },
@@ -60,7 +66,6 @@ class CartManager {
       console.log("Error al traer el carrito", error);
     }
   }
-
   async addProductCartId(cid, pid) {
     try {
       const cart = await CartModel.findById(cid);
@@ -128,4 +133,4 @@ class CartManager {
   }
 }
 
-module.exports = CartManager;
+module.exports = CartService;
